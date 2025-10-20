@@ -1,5 +1,6 @@
 import { Award, ExternalLink, Loader2, Search } from "lucide-react";
 import { type FormEvent, useState } from "react";
+import Image from "next/image";
 import { useMetadata } from "@/hooks/useMetadata";
 import { parseTokenId } from "@/lib/format";
 import type { NFTMetadata, Token } from "@/types";
@@ -41,7 +42,11 @@ export const TokenViewer = () => {
           disabled={loading || !tokenId}
           className="bg-green-600 hover:bg-green-700 disabled:bg-gray-700 text-white font-medium px-6 py-3 rounded-lg transition-colors flex items-center gap-2"
         >
-          {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
+          {loading ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Search className="w-5 h-5" />
+          )}
         </button>
       </form>
       {error && (
@@ -58,16 +63,27 @@ export const TokenViewer = () => {
                 <p className="text-gray-400">{metadata.description}</p>
               </div>
               <div className="bg-gray-900 p-4 rounded-lg border border-gray-700">
-                <p className="text-sm font-medium text-gray-300 mb-2">Student Address</p>
-                <p className="text-xs font-mono break-all text-white">{token.student}</p>
+                <p className="text-sm font-medium text-gray-300 mb-2">
+                  Student Address
+                </p>
+                <p className="text-xs font-mono break-all text-white">
+                  {token.student}
+                </p>
               </div>
               {metadata.attributes.length > 0 && (
                 <div>
-                  <p className="text-sm font-medium text-gray-300 mb-3">Attributes</p>
+                  <p className="text-sm font-medium text-gray-300 mb-3">
+                    Attributes
+                  </p>
                   <div className="grid grid-cols-2 gap-3">
-                    {metadata.attributes.map((attr, idx) => (
-                      <div key={idx} className="bg-gray-900 p-3 rounded-lg border border-gray-700">
-                        <p className="text-xs text-gray-500 mb-1">{attr.trait_type}</p>
+                    {metadata.attributes.map((attr) => (
+                      <div
+                        key={`${attr.trait_type}-${attr.value}`}
+                        className="bg-gray-900 p-3 rounded-lg border border-gray-700"
+                      >
+                        <p className="text-xs text-gray-500 mb-1">
+                          {attr.trait_type}
+                        </p>
                         <p className="text-sm font-medium">{attr.value}</p>
                       </div>
                     ))}
@@ -78,11 +94,16 @@ export const TokenViewer = () => {
             <div>
               <div className="aspect-square bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg flex items-center justify-center overflow-hidden shadow-lg">
                 {metadata.image ? (
-                  <img
+                  <Image
                     src={metadata.image}
                     alt={metadata.name}
+                    width={400}
+                    height={400}
                     className="w-full h-full object-cover"
-                    onError={(e) => (e.target as HTMLImageElement).style.display = "none"}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = "none";
+                    }}
                   />
                 ) : (
                   <Award className="w-24 h-24 text-gray-500" />

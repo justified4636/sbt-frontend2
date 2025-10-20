@@ -1,16 +1,17 @@
 import { Award, ExternalLink } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useMetadata } from "@/hooks/useMetadata"; // Assuming we extend this for multiples
+import { useMetadata } from "@/hooks/useMetadata";
 import { parseTokenId } from "@/lib/format";
 import type { NFTMetadata, Token } from "@/types";
-import { useContractState } from "@/hooks/useContractState"; // To get total minted
-
-// ... imports ...
+import { useContractState } from "@/hooks/useContractState";
+import Image from "next/image";
 
 export const CertificateShelf = () => {
   const { state: contractState } = useContractState();
   const { fetchToken } = useMetadata();
-  const [certificates, setCertificates] = useState<Array<{ token: Token; metadata: NFTMetadata }>>([]);
+  const [certificates, setCertificates] = useState<
+    Array<{ token: Token; metadata: NFTMetadata; tokenId: bigint }>
+  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,17 +21,23 @@ export const CertificateShelf = () => {
       setLoading(true);
       setError(null);
       try {
-        const total = Number(contractState.total); // Assuming small collection for demo
+        const total = Number(contractState.total);
         const fetched = [];
-        for (let id = 1; id <= Math.min(total, 10); id++) { // Limit to 10 for performance
-          const result = await fetchToken(parseTokenId(id.toString()));
-          if (result.token && result.metadata) {
-            fetched.push(result);
+        for (let id = 1; id <= Math.min(total, 10); id++) {
+          try {
+            const tokenId = parseTokenId(id.toString());
+            const result = await fetchToken(tokenId);
+            if (result.token && result.metadata) {
+              fetched.push({ ...result, tokenId });
+            }
+          } catch (tokenErr) {
+            console.warn(`Failed to fetch token ${id}:`, tokenErr);
           }
         }
         setCertificates(fetched);
       } catch (err) {
         setError("Failed to load certificates");
+        console.error("Certificate loading error:", err);
       } finally {
         setLoading(false);
       }
@@ -43,7 +50,7 @@ export const CertificateShelf = () => {
       <div className="bg-gray-800 rounded-2xl shadow-md border border-gray-700 p-4 sm:p-6">
         <div className="animate-pulse grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-64 bg-gray-900 rounded-lg"></div>
+            <div key={`loading-${i}`} className="h-64 bg-gray-900 rounded-lg"></div>
           ))}
         </div>
       </div>
@@ -70,19 +77,24 @@ export const CertificateShelf = () => {
 
   return (
     <div className="bg-gray-800 rounded-2xl shadow-md border border-gray-700 p-4 sm:p-6 overflow-x-auto">
-      <div className="flex space-x-4 min-w-max"> {/* Horizontal scroll for mobile carousel */}
-        {certificates.map(({ token, metadata }, index) => (
+      <div className="flex space-x-4 min-w-max">
+        {certificates.map(({ metadata, tokenId }, index) => (
           <div
-            key={index}
+            key={tokenId.toString()}
             className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-lg border border-gray-700 overflow-hidden transition-transform hover:scale-105 animate-fade-in w-64 flex-shrink-0"
           >
             <div className="aspect-square relative">
               {metadata.image ? (
-                <img
+                <Image
                   src={metadata.image}
                   alt={metadata.name}
+                  width={256}
+                  height={256}
                   className="w-full h-full object-cover"
-                  onError={(e) => (e.target as HTMLImageElement).src = ''} // Fallback
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = "none";
+                  }}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gray-700">
@@ -91,22 +103,34 @@ export const CertificateShelf = () => {
               )}
             </div>
             <div className="p-4">
-              <h3 className="text-lg font-semibold mb-1 truncate">{metadata.name}</h3>
-              <p className="text-sm text-gray-400 mb-3 line-clamp-2">{metadata.description}</p>
+              <h3 className="text-lg font-semibold mb-1 truncate text-white">
+                {metadata.name}
+              </h3>
+              <p className="text-sm text-gray-400 mb-3 line-clamp-2">
+                {metadata.description}
+              </p>
               <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-500">ID: {token.id.toString()}</span>
-                {index < 3 && <span className="text-xs text-magic-pink bg-magic-pink/20 px-2 py-1 rounded">Trending 🔥</span>}
-                {metadata.image && (
+                <span className="text-xs text-gray-500">
+                  ID: {tokenId.toString()}
+                </span>
+                {index < 3 && (
+                  <span className="text-xs text-pink-300 bg-pink-500/20 px-2 py-1 rounded">
+                    Trending 🔥
+                  </span>
+                )}
+              </div>
+              {metadata.image && (
+                <div className="mt-2">
                   <a
                     href={metadata.image}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-purple-400 hover:text-purple-300 flex items-center gap-1 text-sm"
                   >
-                    View <ExternalLink className="w-4 h-4" />
+                    View Full <ExternalLink className="w-4 h-4" />
                   </a>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         ))}

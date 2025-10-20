@@ -6,6 +6,7 @@ export interface ContractState {
 }
 
 export interface Token {
+  id: bigint;
   student: string;
   metadata: string;
 }

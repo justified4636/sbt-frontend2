@@ -27,11 +27,15 @@ export class ContractService {
     const now = Date.now();
     const timeSinceLastCall = now - ContractService.lastCallTime;
     ContractService.lastCallTime = now;
-    
-    console.log(`[API CALL #${ContractService.callCount}] ${method} - Time since last call: ${timeSinceLastCall}ms`);
-    
+
+    console.log(
+      `[API CALL #${ContractService.callCount}] ${method} - Time since last call: ${timeSinceLastCall}ms`,
+    );
+
     if (timeSinceLastCall < 1000) {
-      console.warn(`[WARNING] Rapid API calls detected! Only ${timeSinceLastCall}ms between calls`);
+      console.warn(
+        `[WARNING] Rapid API calls detected! Only ${timeSinceLastCall}ms between calls`,
+      );
     }
   }
 
@@ -40,16 +44,20 @@ export class ContractService {
    */
   async getState(): Promise<ContractState> {
     const timestamp = new Date().toISOString();
-    this.logApiCall('getState');
-    console.log(`[${timestamp}] ContractService.getState() - Making API call to ${TESTNET_ENDPOINT}`);
-    
+    this.logApiCall("getState");
+    console.log(
+      `[${timestamp}] ContractService.getState() - Making API call to ${TESTNET_ENDPOINT}`,
+    );
+
     try {
       const contract = this.client.open(
         CertificationNFT.fromAddress(this.contractAddress),
       );
 
       const state = await contract.getState();
-      console.log(`[${timestamp}] ContractService.getState() - API call successful`);
+      console.log(
+        `[${timestamp}] ContractService.getState() - API call successful`,
+      );
 
       return {
         owner: state.owner.toString(),
@@ -58,13 +66,18 @@ export class ContractService {
         base_uri: state.base_uri,
       };
     } catch (error) {
-      console.error(`[${timestamp}] ContractService.getState() - API call failed:`, error);
-      
+      console.error(
+        `[${timestamp}] ContractService.getState() - API call failed:`,
+        error,
+      );
+
       // Log specific rate limit errors
-      if (error instanceof Error && error.message.includes('429')) {
-        console.error(`[${timestamp}] RATE LIMIT DETECTED in getState() - TON API returned 429`);
+      if (error instanceof Error && error.message.includes("429")) {
+        console.error(
+          `[${timestamp}] RATE LIMIT DETECTED in getState() - TON API returned 429`,
+        );
       }
-      
+
       throw new Error("Failed to fetch contract state");
     }
   }
@@ -74,25 +87,34 @@ export class ContractService {
    */
   async isAdmin(address: string): Promise<boolean> {
     const timestamp = new Date().toISOString();
-    this.logApiCall('isAdmin');
-    console.log(`[${timestamp}] ContractService.isAdmin() - Making API call to ${TESTNET_ENDPOINT}`);
-    
+    this.logApiCall("isAdmin");
+    console.log(
+      `[${timestamp}] ContractService.isAdmin() - Making API call to ${TESTNET_ENDPOINT}`,
+    );
+
     try {
       const contract = this.client.open(
         CertificationNFT.fromAddress(this.contractAddress),
       );
 
       const result = await contract.getIsAdmin(TonAddress.parse(address));
-      console.log(`[${timestamp}] ContractService.isAdmin() - API call successful`);
+      console.log(
+        `[${timestamp}] ContractService.isAdmin() - API call successful`,
+      );
       return result;
     } catch (error) {
-      console.error(`[${timestamp}] ContractService.isAdmin() - API call failed:`, error);
-      
+      console.error(
+        `[${timestamp}] ContractService.isAdmin() - API call failed:`,
+        error,
+      );
+
       // Log specific rate limit errors
-      if (error instanceof Error && error.message.includes('429')) {
-        console.error(`[${timestamp}] RATE LIMIT DETECTED in isAdmin() - TON API returned 429`);
+      if (error instanceof Error && error.message.includes("429")) {
+        console.error(
+          `[${timestamp}] RATE LIMIT DETECTED in isAdmin() - TON API returned 429`,
+        );
       }
-      
+
       return false;
     }
   }
@@ -111,6 +133,7 @@ export class ContractService {
       if (!token) return null;
 
       return {
+        id,
         student: token.student.toString(),
         metadata: token.metadata.toString(),
       };
