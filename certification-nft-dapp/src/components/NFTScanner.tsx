@@ -1,6 +1,7 @@
-import { Search, Loader2, AlertCircle, CheckCircle, ExternalLink } from "lucide-react";
+import { Search, Loader2, AlertCircle, CheckCircle, ExternalLink, FileText } from "lucide-react";
 import { useState } from "react";
 import { useNFTScanner, type ScannedNFT } from "@/hooks/useNFTScanner";
+import { IPFSCollectionViewer } from "./IPFSCollectionViewer";
 import type { NFTMetadata } from "@/types";
 
 const NFTCard = ({ nft }: { nft: ScannedNFT }) => {
@@ -95,11 +96,13 @@ const NFTCard = ({ nft }: { nft: ScannedNFT }) => {
 export const NFTScanner = () => {
   const { scanAllNFTs, scanning, error, nfts, clearResults } = useNFTScanner();
   const [showResults, setShowResults] = useState(false);
+  const [showIPFSCollection, setShowIPFSCollection] = useState(false);
 
   const handleScan = async () => {
     try {
       await scanAllNFTs();
       setShowResults(true);
+      setShowIPFSCollection(true);
     } catch (err) {
       // Error is handled by the hook
     }
@@ -108,6 +111,7 @@ export const NFTScanner = () => {
   const handleClear = () => {
     clearResults();
     setShowResults(false);
+    setShowIPFSCollection(false);
   };
 
   return (
@@ -181,6 +185,21 @@ export const NFTScanner = () => {
         <div className="text-center py-12">
           <Search className="w-12 h-12 text-gray-500 mx-auto mb-4" />
           <p className="text-gray-400">No NFTs found on the blockchain</p>
+        </div>
+      )}
+
+      {showIPFSCollection && (
+        <div className="mt-8 pt-6 border-t border-gray-700">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-purple-900/50 rounded-lg">
+              <FileText className="w-6 h-6 text-purple-300" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold">IPFS Collection Metadata</h3>
+              <p className="text-sm text-gray-400">JSON metadata files from the collection</p>
+            </div>
+          </div>
+          <IPFSCollectionViewer />
         </div>
       )}
     </div>

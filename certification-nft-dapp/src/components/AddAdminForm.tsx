@@ -76,17 +76,22 @@ export const AddAdminForm = ({ onSuccess }: AddAdminFormProps) => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+          className="w-full relative bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 disabled:from-gray-700 disabled:to-gray-600 text-white font-medium py-3 rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-purple-500/25 disabled:transform-none disabled:shadow-none overflow-hidden group"
         >
-          {loading ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" /> Adding...
-            </>
-          ) : (
-            <>
-              <Shield className="w-5 h-5" /> Add Admin
-            </>
-          )}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
+          <div className="relative flex items-center justify-center gap-2">
+            {loading ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin animate-pulse" />
+                <span>Adding...</span>
+              </>
+            ) : (
+              <>
+                <Shield className="w-5 h-5 group-hover:animate-bounce" />
+                <span>Add Admin</span>
+              </>
+            )}
+          </div>
         </button>
       </form>
     </div>

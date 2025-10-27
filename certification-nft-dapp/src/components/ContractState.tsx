@@ -64,7 +64,7 @@ export const ContractState = () => {
               </svg>
             </div>
             <div>
-              <p className="text-sm font-medium text-purple-200">Total Issued</p>
+              <p className="text-sm font-medium text-purple-200">Total Minted</p>
               <p className="text-2xl font-bold text-purple-100">
                 {contractState.total.toString()}
               </p>
@@ -93,7 +93,7 @@ export const ContractState = () => {
             <div>
               <p className="text-sm font-medium text-pink-200">Next Available Token</p>
               <p className="text-2xl font-bold text-pink-100">
-                {contractState.nextId.toString()}
+                {(contractState.total + BigInt(1)).toString()}
               </p>
             </div>
           </div>
@@ -120,7 +120,7 @@ export const ContractState = () => {
             <div>
               <p className="text-sm font-medium text-green-200">Circulation</p>
               <p className="text-2xl font-bold text-green-100">
-                {formatSupply(contractState.total, BigInt(10000))}
+                {(BigInt(1000) - contractState.total).toString()}
               </p>
             </div>
           </div>

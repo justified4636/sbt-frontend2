@@ -702,17 +702,14 @@ export default function Home() {
           <NFTScanner />
         </section>
 
+
         <section id="certificate-explorer" className="mb-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
             <div>
-              <h2 className={`text-xl sm:text-2xl font-bold transition-colors duration-300 ${
-                isDarkMode ? 'text-white' : 'text-gray-900'
-              }`}>
+              <h2 className={`text-xl sm:text-2xl font-bold transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                 Token Viewer
               </h2>
-              <p className={`text-sm transition-colors duration-300 ${
-                isDarkMode ? 'text-gray-400' : 'text-gray-600'
-              }`}>
+              <p className={`text-sm transition-colors duration-300 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                 Query token metadata and ownership details
               </p>
             </div>
