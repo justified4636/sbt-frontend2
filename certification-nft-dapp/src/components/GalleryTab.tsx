@@ -81,7 +81,7 @@ export function GalleryTab({
               <ImageIcon className="w-5 h-5" />
               Certificate Collection
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid  gap-4">
               {certificatePreviews.map((cert) => (
                 <div key={cert.id} className={`p-4 rounded-lg border transition-all duration-300 hover:scale-[1.02] ${
                   isDarkMode ? "bg-[#22303c] border-[#2f3336]" : "bg-[#f7f9fa] border-[#e1e8ed]"
