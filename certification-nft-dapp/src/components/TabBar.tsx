@@ -1,4 +1,4 @@
-import { Home as HomeIcon, Grid3X3, Settings } from "lucide-react";
+import { Home as HomeIcon, Grid3X3, Settings, CheckSquare } from "lucide-react";
 
 interface TabBarProps {
   isDarkMode: boolean;
@@ -37,6 +37,32 @@ export function TabBar({ isDarkMode, activeTab, handleTabChange }: TabBarProps) 
             }`} />
             <span className="text-xs font-medium">Home</span>
             {activeTab === 'home' && (
+              <div className={`absolute -top-1 left-1/2 transform -translate-x-1/2 w-8 h-1 rounded-full transition-colors duration-300 ${
+                isDarkMode ? "bg-[#1da1f2]" : "bg-[#1da1f2]"
+              }`} />
+            )}
+          </button>
+
+          {/* Tasks Tab */}
+          <button
+            onClick={() => handleTabChange('tasks')}
+            className={`tab-hover flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-300 min-w-[60px] relative ${
+              activeTab === 'tasks'
+                ? `tab-active transform scale-110 ${
+                    isDarkMode
+                      ? "bg-[#1da1f2]/20 text-[#1da1f2]"
+                      : "bg-[#1da1f2]/20 text-[#1da1f2]"
+                  }`
+                : `text-[#536471] hover:text-[#1da1f2] ${
+                    isDarkMode ? "hover:text-[#1da1f2]" : ""
+                  }`
+            }`}
+          >
+            <CheckSquare className={`w-6 h-6 mb-1 transition-all duration-300 ${
+              activeTab === 'tasks' ? "animate-pulse" : ""
+            }`} />
+            <span className="text-xs font-medium">Tasks</span>
+            {activeTab === 'tasks' && (
               <div className={`absolute -top-1 left-1/2 transform -translate-x-1/2 w-8 h-1 rounded-full transition-colors duration-300 ${
                 isDarkMode ? "bg-[#1da1f2]" : "bg-[#1da1f2]"
               }`} />
