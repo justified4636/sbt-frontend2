@@ -36,6 +36,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-TileColor" content="#008080" />
         <meta name="msapplication-tap-highlight" content="no" />
+        <script src="https://telegram.org/js/telegram-web-app.js"></script>
       </head>
       <body className={`${inter.className} h-screen overflow-y-auto`}>
         <Providers>{children}</Providers>

@@ -9,6 +9,7 @@ import {
   generateShareText,
   shareOrCopyLink,
 } from "@/lib/externalLinks";
+import { isInTelegram, openExternalLink, shareUrl, triggerHapticFeedback } from "@/lib/telegram";
 import {
   getTodayDateString,
   hasCheckedInToday,
@@ -213,9 +214,13 @@ export function TasksTab({
   }
 
   function openLink(url: string) {
-    try {
-      window.open(url, "_blank");
-    } catch (_e) {}
+    if (isInTelegram()) {
+      openExternalLink(url);
+    } else {
+      try {
+        window.open(url, "_blank");
+      } catch (_e) {}
+    }
   }
 
   async function startTask(id: string) {
@@ -241,7 +246,11 @@ export function TasksTab({
         if (userAddress) {
           const referralLink = generateReferralLink(userAddress);
           const shareText = generateShareText(referralLink);
-          await shareOrCopyLink(referralLink, shareText);
+          if (isInTelegram()) {
+            shareUrl(referralLink, shareText);
+          } else {
+            await shareOrCopyLink(referralLink, shareText);
+          }
         }
         break;
       case "checkin":
@@ -265,6 +274,11 @@ export function TasksTab({
     const t = tasks.find((x) => x.id === id);
     if (!t) return;
     if (!t.completed || t.claimed) return;
+
+    // Add haptic feedback for claiming tasks in Telegram
+    if (isInTelegram()) {
+      triggerHapticFeedback('medium');
+    }
 
     setTasks((prev) =>
       prev.map((x) => (x.id === id ? { ...x, claimed: true } : x)),

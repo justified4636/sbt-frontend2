@@ -10,6 +10,7 @@ import { TabBar } from "@/components/TabBar";
 import { TasksTab } from "@/components/TasksTabRealtime";
 import { WelcomeModal } from "@/components/WelcomeModal";
 import { useContractState } from "@/hooks/useContractState";
+import { getTelegramUser, isInTelegram, setTelegramTheme, triggerHapticFeedback } from "@/lib/telegram";
 
 const RewardsTab = dynamic(() => import("@/components/RewardsTab"), {
   ssr: false,
@@ -31,6 +32,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState("home");
   const [previousTab, setPreviousTab] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [telegramUser, setTelegramUser] = useState<any>(null);
 
   const autoGoTimer = useRef<number | null>(null);
 
@@ -47,6 +49,13 @@ export default function Home() {
       setIsDarkMode(false);
       document.documentElement.classList.remove("dark");
     }
+
+    // Initialize Telegram integration
+    if (isInTelegram()) {
+      const tgUser = getTelegramUser();
+      setTelegramUser(tgUser);
+      setTelegramTheme(isDarkMode);
+    }
   }, []);
 
   const toggleTheme = () => {
@@ -59,6 +68,11 @@ export default function Home() {
     } else {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("theme", "light");
+    }
+
+    // Update Telegram theme if in Telegram
+    if (isInTelegram()) {
+      setTelegramTheme(newTheme);
     }
   };
 
@@ -103,6 +117,11 @@ export default function Home() {
 
   const handleTabChange = (newTab: string) => {
     if (newTab === activeTab || isTransitioning) return;
+
+    // Add haptic feedback for tab changes in Telegram
+    if (isInTelegram()) {
+      triggerHapticFeedback('light');
+    }
 
     setPreviousTab(activeTab);
     setIsTransitioning(true);
