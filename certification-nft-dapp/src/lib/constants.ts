@@ -1,5 +1,5 @@
 export const CONTRACT_ADDRESS =
-  "kQDfuXpJnpadl39uvIctBQ22-GcL2c-AG7QGflTdc-w-708k";
+  "EQB06RcI2pIognHT-UZKXeKJZ9IeP8G72v8q2z_V_Wwfeoca";
 export const MAX_SUPPLY = 10000n;
 export const TESTNET_ENDPOINT = "https://testnet.toncenter.com/api/v2/jsonRPC";
 export const TESTNET_API_KEY =
